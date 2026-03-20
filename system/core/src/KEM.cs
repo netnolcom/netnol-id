@@ -26,13 +26,13 @@ public class KEM
     ///     Gets the raw, encoded ML-KEM-1024 private key (fixed size of 3168 bytes). This key must remain highly secured and
     ///     is strictly used to decapsulate incoming ciphertexts.
     /// </summary>
-    public readonly byte[] PrivateKey;
+    public byte[] PrivateKey => (byte[])field.Clone();
 
     /// <summary>
     ///     Gets the raw, encoded ML-KEM-1024 public key (fixed size of 1568 bytes). This key is safe to distribute and is used
     ///     by external parties to encapsulate a shared secret.
     /// </summary>
-    public readonly byte[] PublicKey;
+    public byte[] PublicKey => (byte[])field.Clone();
 
     private KEM(byte[] publicKey, byte[] privateKey)
     {
