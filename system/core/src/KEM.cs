@@ -132,12 +132,12 @@ public class KEM
                 throw new InvalidKeyException("Public key expected, but private key provided.");
 
             var encapsulator = new MLKemEncapsulator(Algorithm);
+            encapsulator.Init(publicKeyObject);
 
             var cipher = new byte[encapsulator.EncapsulationLength];
 
             var secret = new byte[encapsulator.SecretLength];
 
-            encapsulator.Init(publicKeyObject);
             encapsulator.Encapsulate(cipher, 0, cipher.Length, secret, 0, secret.Length);
 
             return (secret, cipher);
@@ -175,13 +175,13 @@ public class KEM
                 throw new InvalidKeyException("Private key expected, but public key provided.");
 
             var decapsulator = new MLKemDecapsulator(Algorithm);
+            decapsulator.Init(privateKeyObject);
 
             var secret = new byte[decapsulator.SecretLength];
 
             if (cipher.Length != decapsulator.EncapsulationLength)
                 throw new ArgumentException($"Ciphertext must be {decapsulator.EncapsulationLength} bytes.");
 
-            decapsulator.Init(privateKeyObject);
             decapsulator.Decapsulate(cipher, 0, cipher.Length, secret, 0, secret.Length);
 
             return secret;
