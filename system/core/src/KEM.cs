@@ -42,6 +42,9 @@ public class KEM
         if (privateKey is not { Length: ExpectedPrivateKeyLength })
             throw new ArgumentException($"Invalid Private Key: {ExpectedPrivateKeyLength} bytes required.");
 
+        if (!IsValidPair(publicKey, privateKey))
+            throw new ArgumentException("Key pair mismatch detected.");
+
         PublicKey = publicKey;
         PrivateKey = privateKey;
     }
@@ -186,6 +189,32 @@ public class KEM
         catch (Exception e)
         {
             throw new ArgumentException($"Failed to decapsulate shared key: {e.Message}", e);
+        }
+    }
+
+    /// <summary>
+    ///     Validates if a public and private key pair are mathematically compatible.
+    ///     Performs a cryptographic round-trip (Encapsulate/Decapsulate) to ensure integrity.
+    /// </summary>
+    /// <param name="publicKey">The 1568-byte encoded public key.</param>
+    /// <param name="privateKey">The 3168-byte encoded private key.</param>
+    /// <returns><c>true</c> if the keys form a valid ML-KEM-1024 pair; otherwise, <c>false</c>.</returns>
+    public static bool IsValidPair(byte[]? publicKey, byte[]? privateKey)
+    {
+        try
+        {
+            if (publicKey is not { Length: ExpectedPublicKeyLength } ||
+                privateKey is not { Length: ExpectedPrivateKeyLength })
+                return false;
+
+            var (originalSecret, cipher) = Encapsulate(publicKey);
+            var recoveredSecret = Decapsulate(cipher, privateKey);
+
+            return originalSecret.Length == recoveredSecret.Length && originalSecret.SequenceEqual(recoveredSecret);
+        }
+        catch
+        {
+            return false;
         }
     }
 }
