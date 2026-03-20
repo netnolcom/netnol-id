@@ -83,7 +83,7 @@ public class KEM
     /// <exception cref="ArgumentException">
     ///     Thrown if the provided key arrays are malformed or do not mathematically correspond to each other.
     /// </exception>
-    public static KEM Create(byte[]? publicKey, byte[]? privateKey)
+    public static KEM Restore(byte[]? publicKey, byte[]? privateKey)
     {
         try
         {
@@ -113,7 +113,7 @@ public class KEM
     /// </returns>
     /// <exception cref="ArgumentNullException">Thrown if the public key argument is absent.</exception>
     /// <exception cref="ArgumentException">Thrown if the public key length is invalid or the encapsulation process fails.</exception>
-    public static (byte[] Secret, byte[] Cipher) GenerateSharedKey(byte[]? publicKey)
+    public static (byte[] Secret, byte[] Cipher) Encapsulate(byte[]? publicKey)
     {
         try
         {
@@ -156,7 +156,7 @@ public class KEM
     /// <exception cref="ArgumentException">
     ///     Thrown if the ciphertext or private key lengths are invalid, or if the decapsulation process is compromised.
     /// </exception>
-    public static byte[] RestoreSharedKey(byte[] cipher, byte[] privateKey)
+    public static byte[] Decapsulate(byte[] cipher, byte[] privateKey)
     {
         try
         {
