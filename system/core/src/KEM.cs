@@ -13,8 +13,10 @@ namespace Netnol.Identity.Core;
 /// </summary>
 public class KEM
 {
-    private const int ExpectedPublicKeyLength = 1568;
-    private const int ExpectedPrivateKeyLength = 3168;
+    public const int ExpectedPublicKeyLength = 1568;
+    public const int ExpectedPrivateKeyLength = 3168;
+    public const int ExpectedCipherLength = 1568;
+    public const int ExpectedSecretLength = 32;
 
     /// <summary>
     ///     Represents the target ML-KEM parameter set. ML-KEM-1024 is utilized to provide the maximum theoretical security

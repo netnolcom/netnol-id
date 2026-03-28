@@ -4,10 +4,10 @@ namespace Netnol.Identity.Core.Test;
 
 public class KEMTests
 {
-    private const int ExpectedPublicKeyLength = 1568;
-    private const int ExpectedPrivateKeyLength = 3168;
-    private const int ExpectedCipherLength = 1568;
-    private const int ExpectedSecretLength = 32;
+    private const int ExpectedPublicKeyLength = KEM.ExpectedPublicKeyLength;
+    private const int ExpectedPrivateKeyLength = KEM.ExpectedPrivateKeyLength;
+    private const int ExpectedCipherLength = KEM.ExpectedCipherLength;
+    private const int ExpectedSecretLength = KEM.ExpectedSecretLength;
 
     public static TheoryData<byte[]> InvalidPublicKeyData => new()
     {
@@ -37,6 +37,14 @@ public class KEMTests
         { new byte[ExpectedCipherLength], new byte[ExpectedPrivateKeyLength + 1] },
         { new byte[ExpectedCipherLength - 1], new byte[ExpectedPrivateKeyLength] }
     };
+
+    [Fact]
+    public void Check_ExpectedSizes()
+    {
+        Assert.Equal(1568, KEM.ExpectedPublicKeyLength);
+        Assert.Equal(3168, KEM.ExpectedPrivateKeyLength);
+        Assert.Equal(32, KEM.ExpectedSecretLength);
+    }
 
     [Fact]
     public void Create_ShouldGenerateKeyPairWithCorrectLengths()
