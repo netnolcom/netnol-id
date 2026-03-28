@@ -4,6 +4,15 @@ namespace Netnol.Identity.Core.Test;
 
 public class CIPHERTest
 {
+
+    [Fact]
+    public void Check_ExpectedSizes()
+    {
+        Assert.Equal(12, CIPHER.ExpectedNonceSize);
+        Assert.Equal(16, CIPHER.ExpectedTagSize);
+        Assert.Equal(32, CIPHER.ExpectedKeySize);
+    }
+
     [Fact]
     public void Protect_Unprotect_RoundTrip_ShouldMaintainIntegrity()
     {

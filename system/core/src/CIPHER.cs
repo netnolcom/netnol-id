@@ -7,9 +7,9 @@ namespace Netnol.Identity.Core;
 /// </summary>
 public static class CIPHER
 {
-    private const int NonceSize = 12;
-    private const int TagSize = 16;
-    private const int KeySize = 32;
+    public const int ExpectedNonceSize = 12;
+    public const int ExpectedTagSize = 16;
+    public const int ExpectedKeySize = 32;
 
     /// <summary>
     ///     Protects the specified data using a symmetric key and returns a secure capsule.
@@ -24,20 +24,20 @@ public static class CIPHER
         ArgumentNullException.ThrowIfNull(data);
         ArgumentNullException.ThrowIfNull(key);
 
-        if (key.Length != KeySize) throw new ArgumentException($"Key must be {KeySize} bytes.", nameof(key));
+        if (key.Length != ExpectedKeySize) throw new ArgumentException($"Key must be {ExpectedKeySize} bytes.", nameof(key));
 
-        var nonce = RandomNumberGenerator.GetBytes(NonceSize);
+        var nonce = RandomNumberGenerator.GetBytes(ExpectedNonceSize);
         var ciphertext = new byte[data.Length];
-        var tag = new byte[TagSize];
+        var tag = new byte[ExpectedTagSize];
 
-        using var engine = new AesGcm(key, TagSize);
+        using var engine = new AesGcm(key, ExpectedTagSize);
         engine.Encrypt(nonce, data, ciphertext, tag);
 
-        var capsule = new byte[NonceSize + TagSize + ciphertext.Length];
+        var capsule = new byte[ExpectedNonceSize + ExpectedTagSize + ciphertext.Length];
 
-        Buffer.BlockCopy(nonce, 0, capsule, 0, NonceSize);
-        Buffer.BlockCopy(tag, 0, capsule, NonceSize, TagSize);
-        Buffer.BlockCopy(ciphertext, 0, capsule, NonceSize + TagSize, ciphertext.Length);
+        Buffer.BlockCopy(nonce, 0, capsule, 0, ExpectedNonceSize);
+        Buffer.BlockCopy(tag, 0, capsule, ExpectedNonceSize, ExpectedTagSize);
+        Buffer.BlockCopy(ciphertext, 0, capsule, ExpectedNonceSize + ExpectedTagSize, ciphertext.Length);
 
         return capsule;
     }
@@ -55,21 +55,21 @@ public static class CIPHER
         ArgumentNullException.ThrowIfNull(capsule);
         ArgumentNullException.ThrowIfNull(key);
 
-        if (capsule.Length < NonceSize + TagSize) throw new ArgumentException("Invalid capsule format.");
+        if (capsule.Length < ExpectedNonceSize + ExpectedTagSize) throw new ArgumentException("Invalid capsule format.");
 
-        var ciphertextLength = capsule.Length - NonceSize - TagSize;
+        var ciphertextLength = capsule.Length - ExpectedNonceSize - ExpectedTagSize;
 
-        var nonce = new byte[NonceSize];
-        var tag = new byte[TagSize];
+        var nonce = new byte[ExpectedNonceSize];
+        var tag = new byte[ExpectedTagSize];
         var ciphertext = new byte[ciphertextLength];
 
-        Buffer.BlockCopy(capsule, 0, nonce, 0, NonceSize);
-        Buffer.BlockCopy(capsule, NonceSize, tag, 0, TagSize);
-        Buffer.BlockCopy(capsule, NonceSize + TagSize, ciphertext, 0, ciphertextLength);
+        Buffer.BlockCopy(capsule, 0, nonce, 0, ExpectedNonceSize);
+        Buffer.BlockCopy(capsule, ExpectedNonceSize, tag, 0, ExpectedTagSize);
+        Buffer.BlockCopy(capsule, ExpectedNonceSize + ExpectedTagSize, ciphertext, 0, ciphertextLength);
 
         var plaintext = new byte[ciphertextLength];
 
-        using var engine = new AesGcm(key, TagSize);
+        using var engine = new AesGcm(key, ExpectedTagSize);
         engine.Decrypt(nonce, ciphertext, tag, plaintext);
 
         return plaintext;
