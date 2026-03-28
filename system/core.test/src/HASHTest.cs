@@ -9,6 +9,13 @@ public class HASHTests
     private readonly byte[] _testKey = "HighEntropySecretKeyForAuthentication"u8.ToArray();
 
     [Fact]
+    public void Check_ExpectedSizes()
+    {
+        Assert.Equal(32, HASH.ExpectedCompute256Size);
+        Assert.Equal(64, HASH.ExpectedCompute512Size);
+    }
+
+    [Fact]
     public void Compute256_Result_MustMatch_SystemSHA256()
     {
         var expected = SHA256.HashData(_testData);

@@ -9,6 +9,9 @@ namespace Netnol.Identity.Core;
 /// </summary>
 public static class HASH
 {
+    public const int ExpectedCompute256Size = 32;
+    public const int ExpectedCompute512Size = 64;
+
     /// <summary>
     ///     Computes a unique 256-bit digital digest for the provided data.
     ///     Ideal for integrity verification and generating compact identity fingerprints.
