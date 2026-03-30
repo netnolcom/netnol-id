@@ -46,4 +46,23 @@ public readonly record struct Username
     {
         return Value;
     }
+
+    public static Username Parse(string value)
+    {
+        return new Username(value, HASH.Compute256(ENCODING.ToBinary(value)!));
+    }
+
+    public static bool TryParse(string value, out Username username)
+    {
+        try
+        {
+            username = Parse(value);
+            return true;
+        }
+        catch
+        {
+            username = default;
+            return false;
+        }
+    }
 }
