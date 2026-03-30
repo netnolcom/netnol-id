@@ -1,19 +1,20 @@
 ﻿using Netnol.Identity.Core;
 
-namespace Netnol.Identity.Service.Models.ObjectValues;
+namespace Netnol.Identity.Service.Domain.ValueObjects;
 
 /// <summary>
 ///     Represents a Network Identity (NID) containing both its plain string value and its cryptographic hash.
 /// </summary>
 public readonly record struct Username
 {
+    /// <summary>Expected size of the username hash (SHA‑256) in bytes.</summary>
     public const uint HashSize = HASH.ExpectedCompute256Size;
 
     /// <summary>
     ///     Initializes a new instance of <see cref="Username" /> with validation and hashing.
     /// </summary>
     /// <param name="value">The raw string value for the identity.</param>
-    /// <param name="hash">The pre-calculated 64-byte hash.</param>
+    /// <param name="hash">The pre‑calculated 64‑byte hash.</param>
     /// <exception cref="ArgumentException">Thrown when the value is invalid or hash size is incorrect.</exception>
     public Username(string value, byte[] hash)
     {
@@ -28,15 +29,19 @@ public readonly record struct Username
     }
 
     /// <summary>
-    ///     The plain text representation of the network identity.
+    ///     Gets the plain text representation of the network identity.
     /// </summary>
     public string Value { get; }
 
     /// <summary>
-    ///     The cryptographic hash of the normalized username.
+    ///     Gets the cryptographic hash of the normalized username.
     /// </summary>
     public byte[] Hash { get; }
 
+    /// <summary>
+    ///     Returns the plain text representation of the username.
+    /// </summary>
+    /// <returns>The username string.</returns>
     public override string ToString()
     {
         return Value;

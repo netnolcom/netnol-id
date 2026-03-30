@@ -1,26 +1,29 @@
 ﻿using Netnol.Identity.Core;
 
-namespace Netnol.Identity.Service.Models.ObjectValues;
+namespace Netnol.Identity.Service.Domain.ValueObjects;
 
 /// <summary>
 ///     Represents the identity's master entropy, stored encrypted and protected by a 512-bit integrity hash.
 /// </summary>
 public readonly record struct Seed
 {
-    /// <summary>The raw master seed entropy size.</summary>
+    /// <summary>Raw master seed entropy size in bytes.</summary>
     public const uint SeedSize = 32;
 
-    /// <summary>The size of the seed when encrypted (Seed + Cipher-Tag + Cipher-Nonce).</summary>
+    /// <summary>
+    ///     Size of the seed when encrypted: raw seed + cipher tag + cipher nonce.
+    /// </summary>
     public const uint EncryptedSeedSize = SeedSize + CIPHER.ExpectedTagSize + CIPHER.ExpectedNonceSize;
 
-    /// <summary>The size of the integrity has.</summary>
+    /// <summary>Expected size of the integrity hash (SHA‑512) in bytes.</summary>
     public const uint HashSize = HASH.ExpectedCompute512Size;
 
     /// <summary>
     ///     Initializes a new <see cref="Seed" /> with strict size validation for encrypted data and hash.
     /// </summary>
-    /// <param name="encryptedValue">The encrypted buffer (32 bytes entropy + Tag + Nonce).</param>
-    /// <param name="hash">The 64-byte integrity hash.</param>
+    /// <param name="encryptedValue">The encrypted buffer (seed + tag + nonce).</param>
+    /// <param name="hash">The 64‑byte integrity hash.</param>
+    /// <exception cref="ArgumentException">Thrown when the encrypted value or hash size is incorrect.</exception>
     public Seed(byte[] encryptedValue, byte[] hash)
     {
         if (encryptedValue.Length != (int)EncryptedSeedSize)
@@ -33,9 +36,13 @@ public readonly record struct Seed
         Hash = hash;
     }
 
-    /// <summary>The encrypted master seed entropy.</summary>
+    /// <summary>
+    ///     Gets the encrypted master seed entropy.
+    /// </summary>
     public byte[] EncryptedValue { get; }
 
-    /// <summary>The cryptographic hash for integrity and verification of the seed data.</summary>
+    /// <summary>
+    ///     Gets the cryptographic hash for integrity and verification of the seed data.
+    /// </summary>
     public byte[] Hash { get; }
 }
