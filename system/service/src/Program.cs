@@ -1,5 +1,7 @@
-using Netnol.Identity.Service.Utilities;
+using Netnol.Identity.Service.Domain.Repositories;
 using Netnol.Identity.Service.Infrastructure.Configuration;
+using Netnol.Identity.Service.Infrastructure.Data;
+using Netnol.Identity.Service.Infrastructure.Repositories;
 using Scalar.AspNetCore;
 
 EnvironmentInitializer.Initialize();
@@ -8,6 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
+builder.Services.AddDbContext<DatabaseContext>(ServiceLifetime.Scoped);
+builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 
 var app = builder.Build();
 app.UseHttpsRedirection();
