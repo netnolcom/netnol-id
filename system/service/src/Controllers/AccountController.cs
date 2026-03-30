@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Netnol.Identity.Service.Application.Common;
+using Netnol.Identity.Service.Application.Services;
 using Netnol.Identity.Service.Contracts.Requests;
 using Netnol.Identity.Service.Contracts.Responses;
 
@@ -10,7 +12,7 @@ namespace Netnol.Identity.Service.Controllers;
 [ApiController]
 [Route("api/v1/accounts")]
 [Produces("application/json")]
-public class AccountController : ControllerBase
+public class AccountController(IAccountService service) : ControllerBase
 {
     /// <summary>
     ///     Verifies if a specific identity is registered within the network.
@@ -21,9 +23,17 @@ public class AccountController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public IActionResult CheckExistence([FromRoute] string nid)
+    public async Task<IActionResult> CheckExistence([FromRoute] string nid)
     {
-        return Ok();
+        var result = await service.CheckExistenceAsync(nid);
+
+        if (result.IsSuccess)
+            return StatusCode(StatusCodes.Status200OK);
+
+        if (result.ErrorType == ErrorType.ResourceNotFound)
+            return StatusCode(StatusCodes.Status404NotFound);
+
+        return BadRequest();
     }
 
     /// <summary>
@@ -35,9 +45,17 @@ public class AccountController : ControllerBase
     [ProducesResponseType<ProfileResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType<ErrorDetailResponse>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ErrorDetailResponse>(StatusCodes.Status404NotFound)]
-    public IActionResult GetProfile([FromRoute] string nid)
+    public async Task<IActionResult> GetProfile([FromRoute] string nid)
     {
-        return Ok();
+        var result = await service.GetProfileAsync(nid);
+
+        if (result.IsSuccess)
+            return Ok(result.Value);
+
+        if (result.ErrorType == ErrorType.ResourceNotFound)
+            return NotFound(ErrorDetailResponse.FromResult(result));
+
+        return BadRequest(ErrorDetailResponse.FromResult(result));
     }
 
     /// <summary>
@@ -50,9 +68,17 @@ public class AccountController : ControllerBase
     [ProducesResponseType<AccountDetailResponse>(StatusCodes.Status201Created)]
     [ProducesResponseType<ErrorDetailResponse>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ErrorDetailResponse>(StatusCodes.Status409Conflict)]
-    public IActionResult Register([FromRoute] string nid, [FromBody] RegisterRequest request)
+    public async Task<IActionResult> Register([FromRoute] string nid, [FromBody] RegisterRequest request)
     {
-        return Created();
+        var result = await service.RegisterAsync(nid, request);
+
+        if (result.IsSuccess)
+            return StatusCode(StatusCodes.Status201Created, result.Value);
+
+        if (result.ErrorType == ErrorType.AlreadyExists)
+            return Conflict(ErrorDetailResponse.FromResult(result));
+
+        return BadRequest(ErrorDetailResponse.FromResult(result));
     }
 
     /// <summary>
@@ -64,9 +90,17 @@ public class AccountController : ControllerBase
     [ProducesResponseType<AuthenticationChallengeWithPasswordResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType<ErrorDetailResponse>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ErrorDetailResponse>(StatusCodes.Status404NotFound)]
-    public IActionResult AuthenticateChallengeWithPassword([FromRoute] string nid)
+    public async Task<IActionResult> AuthenticateChallengeWithPassword([FromRoute] string nid)
     {
-        return Ok();
+        var result = await service.GetPasswordChallengeAsync(nid);
+
+        if (result.IsSuccess)
+            return Ok(result.Value);
+
+        if (result.ErrorType == ErrorType.ResourceNotFound)
+            return NotFound(ErrorDetailResponse.FromResult(result));
+
+        return BadRequest(ErrorDetailResponse.FromResult(result));
     }
 
     /// <summary>
@@ -79,10 +113,18 @@ public class AccountController : ControllerBase
     [ProducesResponseType<AccountDetailResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType<ErrorDetailResponse>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ErrorDetailResponse>(StatusCodes.Status404NotFound)]
-    public IActionResult AuthenticateWithPassword([FromRoute] string nid,
+    public async Task<IActionResult> AuthenticateWithPassword([FromRoute] string nid,
         [FromBody] PasswordAuthenticationRequest request)
     {
-        return Ok();
+        var result = await service.AuthenticateWithPasswordAsync(nid, request);
+
+        if (result.IsSuccess)
+            return Ok(result.Value);
+
+        if (result.ErrorType == ErrorType.ResourceNotFound)
+            return NotFound(ErrorDetailResponse.FromResult(result));
+
+        return BadRequest(ErrorDetailResponse.FromResult(result));
     }
 
     /// <summary>
@@ -95,10 +137,18 @@ public class AccountController : ControllerBase
     [ProducesResponseType<AccountDetailResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType<ErrorDetailResponse>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ErrorDetailResponse>(StatusCodes.Status404NotFound)]
-    public IActionResult AuthenticateWithSeed([FromRoute] string nid,
+    public async Task<IActionResult> AuthenticateWithSeed([FromRoute] string nid,
         [FromBody] SeedAuthenticationRequest request)
     {
-        return Ok();
+        var result = await service.AuthenticateWithSeedAsync(nid, request);
+
+        if (result.IsSuccess)
+            return Ok(result.Value);
+
+        if (result.ErrorType == ErrorType.ResourceNotFound)
+            return NotFound(ErrorDetailResponse.FromResult(result));
+
+        return BadRequest(ErrorDetailResponse.FromResult(result));
     }
 
     /// <summary>
@@ -111,9 +161,17 @@ public class AccountController : ControllerBase
     [ProducesResponseType<ErrorDetailResponse>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ErrorDetailResponse>(StatusCodes.Status404NotFound)]
     [HttpPut("{nid}/credentials/password")]
-    public IActionResult RotatePassword([FromRoute] string nid, [FromBody] PasswordRotationRequest request)
+    public async Task<IActionResult> RotatePassword([FromRoute] string nid, [FromBody] PasswordRotationRequest request)
     {
-        return Ok();
+        var result = await service.RotatePasswordAsync(nid, request);
+
+        if (result.IsSuccess)
+            return Ok(result.Value);
+
+        if (result.ErrorType == ErrorType.ResourceNotFound)
+            return NotFound(ErrorDetailResponse.FromResult(result));
+
+        return BadRequest(ErrorDetailResponse.FromResult(result));
     }
 
     /// <summary>
@@ -126,8 +184,16 @@ public class AccountController : ControllerBase
     [ProducesResponseType<AccountDetailResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType<ErrorDetailResponse>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType<ErrorDetailResponse>(StatusCodes.Status404NotFound)]
-    public IActionResult RotateSeed([FromRoute] string nid, [FromBody] SeedRotationRequest request)
+    public async Task<IActionResult> RotateSeed([FromRoute] string nid, [FromBody] SeedRotationRequest request)
     {
-        return Ok();
+        var result = await service.RotateSeedAsync(nid, request);
+
+        if (result.IsSuccess)
+            return Ok(result.Value);
+
+        if (result.ErrorType == ErrorType.ResourceNotFound)
+            return NotFound(ErrorDetailResponse.FromResult(result));
+
+        return BadRequest(ErrorDetailResponse.FromResult(result));
     }
 }
