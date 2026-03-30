@@ -10,7 +10,7 @@ public class CONVERTERTest
         byte[] input = [0x00, 0x1A, 0x2B, 0x3C, 0xFF];
         const string expected = "001a2b3cff";
 
-        var result = CONVERTER.ToBinary(input);
+        var result = CONVERTER.FromBinary(input);
 
         Assert.Equal(expected, result);
     }
@@ -21,7 +21,7 @@ public class CONVERTERTest
         const string input = "001a2b3cff";
         byte[] expected = [0x00, 0x1A, 0x2B, 0x3C, 0xFF];
 
-        var result = CONVERTER.FromBinary(input);
+        var result = CONVERTER.ToBinary(input);
 
         Assert.Equal(expected, result);
     }
@@ -32,8 +32,8 @@ public class CONVERTERTest
         var original = new byte[32];
         RandomNumberGenerator.Fill(original);
 
-        var encoded = CONVERTER.ToBinary(original);
-        var decoded = CONVERTER.FromBinary(encoded);
+        var encoded = CONVERTER.FromBinary(original);
+        var decoded = CONVERTER.ToBinary(encoded);
 
         Assert.Equal(original, decoded);
     }
@@ -44,7 +44,7 @@ public class CONVERTERTest
         const string input = "ABCDEF01";
         byte[] expected = [0xAB, 0xCD, 0xEF, 0x01];
 
-        var result = CONVERTER.FromBinary(input);
+        var result = CONVERTER.ToBinary(input);
 
         Assert.Equal(expected, result);
     }
@@ -52,13 +52,13 @@ public class CONVERTERTest
     [Fact]
     public void ToBinary_ShouldThrowArgumentNullException_WhenInputIsNull()
     {
-        Assert.Throws<ArgumentNullException>(() => CONVERTER.ToBinary(null!));
+        Assert.Throws<ArgumentNullException>(() => CONVERTER.FromBinary(null!));
     }
 
     [Fact]
     public void FromBinary_ShouldThrowArgumentNullException_WhenInputIsNull()
     {
-        Assert.Throws<ArgumentNullException>(() => CONVERTER.FromBinary(null!));
+        Assert.Throws<ArgumentNullException>(() => CONVERTER.ToBinary(null!));
     }
 
     [Fact]
@@ -66,6 +66,6 @@ public class CONVERTERTest
     {
         var invalidHex = "G1H2I3";
 
-        Assert.Throws<FormatException>(() => CONVERTER.FromBinary(invalidHex));
+        Assert.Throws<FormatException>(() => CONVERTER.ToBinary(invalidHex));
     }
 }

@@ -6,26 +6,26 @@
 public static class CONVERTER
 {
     /// <summary>
-    ///     Converts a byte array to its lowercase hexadecimal string representation.
+    ///     Converts a byte array to string representation.
     /// </summary>
     /// <param name="binary">The byte buffer to be converted.</param>
-    /// <returns>A string containing the hexadecimal representation of the data.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when the binary parameter is null.</exception>
-    public static string ToBinary(byte[] binary)
+    /// <returns>A string containing the representation of the data.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when the bytes parameter is null.</exception>
+    public static string FromBinary(byte[] binary)
     {
         return binary == null
             ? throw new ArgumentNullException(nameof(binary))
-            : Convert.ToHexString(binary).ToLowerInvariant();
+            : Convert.ToHexStringLower(binary);
     }
 
     /// <summary>
-    ///     Converts a hexadecimal string into a byte array.
+    ///     Converts a string into a byte array.
     /// </summary>
-    /// <param name="text">The hexadecimal string to be converted.</param>
+    /// <param name="text">The string to be converted.</param>
     /// <returns>A byte array corresponding to the data in the string.</returns>
     /// <exception cref="ArgumentNullException">Thrown when the text parameter is null.</exception>
-    /// <exception cref="FormatException">Thrown when the string does not have a valid hexadecimal format.</exception>
-    public static byte[] FromBinary(string text)
+    /// <exception cref="FormatException">Thrown when the string is null.</exception>
+    public static byte[] ToBinary(string text)
     {
         return text == null
             ? throw new ArgumentNullException(nameof(text))
