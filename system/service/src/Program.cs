@@ -1,7 +1,8 @@
 using Netnol.Identity.Service.Utilities;
+using Netnol.Identity.Service.Infrastructure.Configuration;
 using Scalar.AspNetCore;
 
-Service.Initialize();
+EnvironmentInitializer.Initialize();
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
