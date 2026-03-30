@@ -1,6 +1,5 @@
-﻿using Netnol.Identity.Service.Models;
-using Netnol.Identity.Service.Models.ObjectValues;
-using Xunit;
+﻿using Netnol.Identity.Service.Domain.Entities;
+using Netnol.Identity.Service.Domain.ValueObjects;
 
 namespace Netnol.Identity.Service.Test;
 

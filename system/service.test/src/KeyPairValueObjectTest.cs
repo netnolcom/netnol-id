@@ -1,4 +1,4 @@
-﻿using Netnol.Identity.Service.Models.ObjectValues;
+﻿using Netnol.Identity.Service.Domain.ValueObjects;
 
 namespace Netnol.Identity.Service.Test;
 
