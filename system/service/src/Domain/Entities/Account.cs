@@ -6,7 +6,7 @@ namespace Netnol.Identity.Service.Domain.Entities;
 ///     Represents the root aggregate for a network account, orchestrating
 ///     identity, credentials, and cryptographic keys.
 /// </summary>
-public class Account
+public class Account()
 {
     /// <summary>
     ///     Initializes a new instance of the <see cref="Account" /> class.
@@ -16,7 +16,7 @@ public class Account
     /// <param name="keys">The cryptographic key pair with protected private keys.</param>
     /// <param name="seed">The encrypted master seed and integrity hash.</param>
     /// <param name="password">The password-based credential with derivation parameters.</param>
-    public Account(Identification id, Username username, KeyPair keys, Seed seed, Password password)
+    public Account(Identification id, Username username, KeyPair keys, Seed seed, Password password) : this()
     {
         Id = id;
         Username = username;
@@ -28,12 +28,12 @@ public class Account
     /// <summary>
     ///     Gets the unique machine-level identifier for the account.
     /// </summary>
-    public Identification Id { get; init; }
+    public Identification Id { get; set; }
 
     /// <summary>
     ///     Gets the network identity name (username) and its cryptographic hash.
     /// </summary>
-    public Username Username { get; init; }
+    public Username Username { get; set; }
 
     /// <summary>
     ///     Gets the cryptographic key pair with protected private keys.
@@ -53,26 +53,34 @@ public class Account
     public void UpdateSeed(byte[] encryptedSeedWithMasterKey, byte[] encryptedPrivateKeyWithNewSeed, byte[] newSeedHash)
     {
         Seed = new Seed(encryptedSeedWithMasterKey, newSeedHash);
-        Keys = Keys with
-        {
-            PrivateWithSeed = encryptedPrivateKeyWithNewSeed
-        };
+
+        Keys = new KeyPair(
+            Keys.Public,
+            Keys.PublicHash,
+            privateHash: Keys.PrivateHash,
+            privateWithPassword: Keys.PrivateWithPassword,
+            privateWithSeed: encryptedPrivateKeyWithNewSeed
+        );
     }
 
-    public void UpdatePassword(byte[] encryptedPrivateKeyWithNewPassword, byte[] newPasswordHash, byte[] newPasswordSalt,
+    public void UpdatePassword(byte[] encryptedPrivateKeyWithNewPassword, byte[] newPasswordHash,
+        byte[] newPasswordSalt,
         uint passwordParallelismCost,
         uint passwordIterationCost, uint passwordMemoryCost)
     {
         Password = new Password(
-            hash: newPasswordHash,
+            newPasswordHash,
             iteration: passwordIterationCost,
             parallelism: passwordParallelismCost,
             memory: passwordMemoryCost,
             salt: newPasswordSalt);
 
-        Keys = Keys with
-        {
-            PrivateWithPassword = encryptedPrivateKeyWithNewPassword
-        };
+        Keys = new KeyPair(
+            Keys.Public,
+            Keys.PublicHash,
+            privateHash: Keys.PrivateHash,
+            privateWithPassword: encryptedPrivateKeyWithNewPassword,
+            privateWithSeed: Keys.PrivateWithSeed
+        );
     }
 }
