@@ -38,15 +38,41 @@ public class Account
     /// <summary>
     ///     Gets the cryptographic key pair with protected private keys.
     /// </summary>
-    public KeyPair Keys { get; init; }
+    public KeyPair Keys { get; set; }
 
     /// <summary>
     ///     Gets the encrypted master seed and its integrity hash.
     /// </summary>
-    public Seed Seed { get; init; }
+    public Seed Seed { get; set; }
 
     /// <summary>
     ///     Gets the password-based credential with derivation parameters.
     /// </summary>
-    public Password Password { get; init; }
+    public Password Password { get; set; }
+
+    public void UpdateSeed(byte[] encryptedSeedWithMasterKey, byte[] encryptedPrivateKeyWithNewSeed, byte[] newSeedHash)
+    {
+        Seed = new Seed(encryptedSeedWithMasterKey, newSeedHash);
+        Keys = Keys with
+        {
+            PrivateWithSeed = encryptedPrivateKeyWithNewSeed
+        };
+    }
+
+    public void UpdatePassword(byte[] encryptedPrivateKeyWithNewPassword, byte[] newPasswordHash, byte[] newPasswordSalt,
+        uint passwordParallelismCost,
+        uint passwordIterationCost, uint passwordMemoryCost)
+    {
+        Password = new Password(
+            hash: newPasswordHash,
+            iteration: passwordIterationCost,
+            parallelism: passwordParallelismCost,
+            memory: passwordMemoryCost,
+            salt: newPasswordSalt);
+
+        Keys = Keys with
+        {
+            PrivateWithPassword = encryptedPrivateKeyWithNewPassword
+        };
+    }
 }

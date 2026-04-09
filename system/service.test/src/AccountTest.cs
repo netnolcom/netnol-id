@@ -34,7 +34,7 @@ public class AccountTest
             publicKey: CreateFilledBuffer(KeyPair.PublicKeySize, 0x44),
             publicHash: CreateFilledBuffer(KeyPair.HashSize, 0x55),
             privateWithPassword: CreateFilledBuffer(KeyPair.EncryptedPrivateKeySize, 0x66),
-            privateWithSalt: CreateFilledBuffer(KeyPair.EncryptedPrivateKeySize, 0x77),
+            privateWithSeed: CreateFilledBuffer(KeyPair.EncryptedPrivateKeySize, 0x77),
             privateHash: CreateFilledBuffer(KeyPair.HashSize, 0x88));
 
         var seed = new Seed(
@@ -59,7 +59,7 @@ public class AccountTest
         Assert.All(account.Keys.Public, b => Assert.Equal(0x44, b));
         Assert.All(account.Keys.PublicHash, b => Assert.Equal(0x55, b));
         Assert.All(account.Keys.PrivateWithPassword, b => Assert.Equal(0x66, b));
-        Assert.All(account.Keys.PrivateWithSalt, b => Assert.Equal(0x77, b));
+        Assert.All(account.Keys.PrivateWithSeed, b => Assert.Equal(0x77, b));
         Assert.All(account.Keys.PrivateHash, b => Assert.Equal(0x88, b));
 
         // Master Seed Validation

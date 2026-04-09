@@ -1,4 +1,5 @@
-﻿using Netnol.Identity.Service.Application.Contracts.Outputs;
+﻿using Netnol.Identity.Core;
+using Netnol.Identity.Service.Application.Contracts.Outputs;
 
 namespace Netnol.Identity.Service.Contracts.Responses;
 
@@ -22,7 +23,7 @@ public record PasswordChallengeResponse(
         return new PasswordChallengeResponse(
             Id: output.Id.ToString(),
             Username: output.Username.Value,
-            PasswordSalt: output.PasswordSalt,
+            PasswordSalt: CONVERTER.FromBinary(output.PasswordSalt),
             PasswordIterationCost: output.PasswordIterationCost,
             PasswordMemoryCost: output.PasswordMemoryCost,
             PasswordParallelismCost: output.PasswordParallelismCost);

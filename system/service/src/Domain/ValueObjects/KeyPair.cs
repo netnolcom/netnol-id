@@ -28,10 +28,10 @@ public readonly record struct KeyPair
     /// <param name="publicKey">The public key material.</param>
     /// <param name="publicHash">The hash of the public key.</param>
     /// <param name="privateWithPassword">The private key encrypted with password-derived key.</param>
-    /// <param name="privateWithSalt">The private key encrypted with seed-derived key.</param>
+    /// <param name="privateWithSeed">The private key encrypted with seed-derived key.</param>
     /// <param name="privateHash">The hash of the private key material.</param>
     /// <exception cref="ArgumentException">Thrown when any parameter does not match the expected size.</exception>
-    public KeyPair(byte[] publicKey, byte[] publicHash, byte[] privateWithPassword, byte[] privateWithSalt,
+    public KeyPair(byte[] publicKey, byte[] publicHash, byte[] privateWithPassword, byte[] privateWithSeed,
         byte[] privateHash)
     {
         if (publicKey.Length != PublicKeySize)
@@ -43,7 +43,7 @@ public readonly record struct KeyPair
         if (privateWithPassword.Length != EncryptedPrivateKeySize)
             throw new ArgumentException($"Invalid PrivateWithPassword size. Expected {EncryptedPrivateKeySize} bytes.");
 
-        if (privateWithSalt.Length != EncryptedPrivateKeySize)
+        if (privateWithSeed.Length != EncryptedPrivateKeySize)
             throw new ArgumentException($"Invalid PrivateWithSalt size. Expected {EncryptedPrivateKeySize} bytes.");
 
         if (privateHash.Length != HashSize)
@@ -52,32 +52,32 @@ public readonly record struct KeyPair
         Public = publicKey;
         PublicHash = publicHash;
         PrivateWithPassword = privateWithPassword;
-        PrivateWithSalt = privateWithSalt;
+        PrivateWithSeed = privateWithSeed;
         PrivateHash = privateHash;
     }
 
     /// <summary>
     ///     Gets the identity's public key for encapsulation.
     /// </summary>
-    public byte[] Public { get; }
+    public byte[] Public { get; init; }
 
     /// <summary>
     ///     Gets the cryptographic hash of the public key for indexing and verification.
     /// </summary>
-    public byte[] PublicHash { get; }
+    public byte[] PublicHash { get; init; }
 
     /// <summary>
     ///     Gets the private key wrapped with password-based protection.
     /// </summary>
-    public byte[] PrivateWithPassword { get; }
+    public byte[] PrivateWithPassword { get; init; }
 
     /// <summary>
-    ///     Gets the private key wrapped with salt-based (seed) protection.
+    ///     Gets the private key wrapped with seed-based protection.
     /// </summary>
-    public byte[] PrivateWithSalt { get; }
+    public byte[] PrivateWithSeed { get; init; }
 
     /// <summary>
     ///     Gets the cryptographic hash of the private key material for integrity auditing.
     /// </summary>
-    public byte[] PrivateHash { get; }
+    public byte[] PrivateHash { get; init; }
 }
