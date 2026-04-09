@@ -28,7 +28,7 @@ public class AccountTest
         var password = new Password(
             hash: CreateFilledBuffer(Password.HashSize, 0x22),
             salt: CreateFilledBuffer(Password.SaltSize, 0x33),
-            iterations: 10, memory: 512, parallelism: 2);
+            iteration: 10, memory: 512, parallelism: 2);
 
         var keys = new KeyPair(
             publicKey: CreateFilledBuffer(KeyPair.PublicKeySize, 0x44),

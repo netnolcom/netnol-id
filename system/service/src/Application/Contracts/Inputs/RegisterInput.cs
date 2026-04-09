@@ -1,17 +1,15 @@
-﻿using Netnol.Identity.Service.Contracts.Common;
+﻿using System.Security.Cryptography.X509Certificates;
 
-namespace Netnol.Identity.Service.Contracts.Requests;
+namespace Netnol.Identity.Service.Application.Contracts.Inputs;
 
-/// <summary>
-///     Contains the complete identity and credential set required for account registration.
-/// </summary>
-public record RegisterRequest(
+public record RegisterInput(
+    string Username,
     string PublicKey,
     string PublicKeyHash,
     string PrivateKeyHash,
     string EncryptedPrivateKeyWithPassword,
     string EncryptedPrivateKeyWithSeed,
-    string EncryptedSeedWithPrivateKey,
+    string EncryptedSeedWithMasterKey,
     string SeedHash,
     string PasswordHash,
     string PasswordSalt,

@@ -41,11 +41,11 @@ public readonly record struct Password
     /// </summary>
     /// <param name="hash">The generated hash. Must be exactly <see cref="HashSize" /> bytes.</param>
     /// <param name="salt">The generated salt. Must be exactly <see cref="SaltSize" /> bytes.</param>
-    /// <param name="iterations">Number of iterations within the allowed range.</param>
+    /// <param name="iteration">Number of iterations within the allowed range.</param>
     /// <param name="memory">Memory allocation within the allowed range.</param>
     /// <param name="parallelism">Parallelism degree within the allowed range.</param>
     /// <exception cref="ArgumentException">Thrown when any parameter violates the security constraints.</exception>
-    public Password(byte[] hash, byte[] salt, uint iterations, uint memory, uint parallelism)
+    public Password(byte[] hash, byte[] salt, uint iteration, uint memory, uint parallelism)
     {
         if (hash.Length != HashSize)
             throw new ArgumentException($"Invalid Hash size. Expected {HashSize} bytes.");
@@ -53,9 +53,9 @@ public readonly record struct Password
         if (salt.Length != SaltSize)
             throw new ArgumentException($"Invalid Salt size. Expected {SaltSize} bytes.");
 
-        if (iterations is < MinIterations or > MaxIterations)
+        if (iteration is < MinIterations or > MaxIterations)
             throw new ArgumentException(
-                $"Iterations ({iterations}) must be between {MinIterations} and {MaxIterations}.");
+                $"Iterations ({iteration}) must be between {MinIterations} and {MaxIterations}.");
 
         if (parallelism is < MinParallelism or > MaxParallelism)
             throw new ArgumentException(
@@ -66,7 +66,7 @@ public readonly record struct Password
 
         Hash = hash;
         Salt = salt;
-        Iterations = iterations;
+        Iteration = iteration;
         Memory = memory;
         Parallelism = parallelism;
     }
@@ -84,7 +84,7 @@ public readonly record struct Password
     /// <summary>
     ///     Gets the number of iterations (time cost) applied to the derivation algorithm.
     /// </summary>
-    public uint Iterations { get; }
+    public uint Iteration { get; }
 
     /// <summary>
     ///     Gets the amount of memory in MiB (memory cost) allocated for the derivation process.

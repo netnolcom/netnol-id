@@ -19,7 +19,7 @@ public class PasswordValueObjectTest
         // Assert
         Assert.Equal(_validHash, password.Hash);
         Assert.Equal(_validSalt, password.Salt);
-        Assert.Equal(ValidIterations, password.Iterations);
+        Assert.Equal(ValidIterations, password.Iteration);
         Assert.Equal(ValidMemory, password.Memory);
         Assert.Equal(ValidParallelism, password.Parallelism);
     }

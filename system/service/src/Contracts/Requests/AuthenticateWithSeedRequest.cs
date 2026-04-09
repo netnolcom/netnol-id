@@ -3,5 +3,5 @@
 /// <summary>
 ///     Represents a verification proof for seed-based authentication.
 /// </summary>
-/// <param name="Hash">The hexadecimal proof of seed knowledge.</param>
-public record SeedAuthenticationRequest(string Hash);
+/// <param name="SeedHash">The hexadecimal proof of seed knowledge.</param>
+public record AuthenticateWithSeedRequest(string SeedHash);
