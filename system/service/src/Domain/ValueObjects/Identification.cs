@@ -1,4 +1,6 @@
-﻿namespace Netnol.Identity.Service.Domain.ValueObjects;
+﻿using System.Globalization;
+
+namespace Netnol.Identity.Service.Domain.ValueObjects;
 
 /// <summary>
 ///     Represents the unique machine-level identity using a 128-bit Object Identifier (OID).
@@ -33,5 +35,10 @@ public readonly record struct Identification
     public override string ToString()
     {
         return Value.ToString("x32");
+    }
+
+    public static Identification Parse(string value)
+    {
+        return new Identification(UInt128.Parse(value, NumberStyles.HexNumber));
     }
 }

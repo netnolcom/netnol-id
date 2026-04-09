@@ -1,4 +1,5 @@
 ﻿using Netnol.Identity.Core;
+using StringQueryMap;
 
 namespace Netnol.Identity.Service.Domain.ValueObjects;
 
@@ -95,4 +96,30 @@ public readonly record struct Password
     ///     Gets the degree of parallelism (number of threads) used during the derivation.
     /// </summary>
     public uint Parallelism { get; }
+
+    public override string ToString()
+    {
+        var map = new SQM("=", ";");
+
+        map.Add("PWH", Hash);
+        map.Add("PWS", Salt);
+        map.Add("PWI", Iteration);
+        map.Add("PWM", Memory);
+        map.Add("PWP", Parallelism);
+
+        return map.ToString();
+    }
+
+    public static Password Parse(string value)
+    {
+        var map = SQM.Parse(value, "=", ";");
+
+        return new Password(
+            map.Get<byte[]>("PWH"),
+            map.Get<byte[]>("PWS"),
+            map.Get<uint>("PWI"),
+            map.Get<uint>("PWM"),
+            map.Get<uint>("PWP")
+        );
+    }
 }

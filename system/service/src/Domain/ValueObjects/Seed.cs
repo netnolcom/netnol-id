@@ -1,4 +1,5 @@
 ﻿using Netnol.Identity.Core;
+using StringQueryMap;
 
 namespace Netnol.Identity.Service.Domain.ValueObjects;
 
@@ -45,4 +46,22 @@ public readonly record struct Seed
     ///     Gets the cryptographic hash for integrity and verification of the seed data.
     /// </summary>
     public byte[] Hash { get; }
+
+
+    public override string ToString()
+    {
+        var map = new SQM("=", ";");
+
+        map.Add("SDH", Hash);
+        map.Add("ESM", EncryptedValue);
+
+        return map.ToString();
+    }
+
+    public static Seed Parse(string value)
+    {
+        var map = SQM.Parse(value, "=", ";");
+
+        return new Seed(map.Get<byte[]>("ESM"), map.Get<byte[]>("SDH"));
+    }
 }

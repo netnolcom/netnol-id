@@ -1,4 +1,5 @@
 ﻿using Netnol.Identity.Core;
+using StringQueryMap;
 
 namespace Netnol.Identity.Service.Domain.ValueObjects;
 
@@ -59,25 +60,51 @@ public readonly record struct KeyPair
     /// <summary>
     ///     Gets the identity's public key for encapsulation.
     /// </summary>
-    public byte[] Public { get; init; }
+    public byte[] Public { get; }
 
     /// <summary>
     ///     Gets the cryptographic hash of the public key for indexing and verification.
     /// </summary>
-    public byte[] PublicHash { get; init; }
+    public byte[] PublicHash { get; }
 
     /// <summary>
     ///     Gets the private key wrapped with password-based protection.
     /// </summary>
-    public byte[] PrivateWithPassword { get; init; }
+    public byte[] PrivateWithPassword { get; }
 
     /// <summary>
     ///     Gets the private key wrapped with seed-based protection.
     /// </summary>
-    public byte[] PrivateWithSeed { get; init; }
+    public byte[] PrivateWithSeed { get; }
 
     /// <summary>
     ///     Gets the cryptographic hash of the private key material for integrity auditing.
     /// </summary>
-    public byte[] PrivateHash { get; init; }
+    public byte[] PrivateHash { get; }
+
+    public override string ToString()
+    {
+        var map = new SQM("=", ";");
+
+        map.Add("PBK", Public);
+        map.Add("PKH", PublicHash);
+        map.Add("PRH", PrivateHash);
+        map.Add("PRS", PrivateWithSeed);
+        map.Add("PRP", PrivateWithPassword);
+
+        return map.ToString();
+    }
+
+    public static KeyPair Parse(string value)
+    {
+        var map = new SQM("=", ";");
+
+        return new KeyPair(
+            map.Get<byte[]>("PBK"),
+            map.Get<byte[]>("PKH"),
+            privateHash: map.Get<byte[]>("PRH"),
+            privateWithSeed: map.Get<byte[]>("PRS"),
+            privateWithPassword: map.Get<byte[]>("PRP")
+        );
+    }
 }
