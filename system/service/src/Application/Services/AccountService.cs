@@ -15,15 +15,16 @@ public class AccountService(IAccountRepository repository) : IAccountService
     public async Task<Result<CheckExistenceOutput>> CheckExistenceAsync(CheckExistenceInput input)
     {
         if (!Username.TryParse(input.Username, out var username))
-            return Result<CheckExistenceOutput>.FromFailure(ErrorType.InvalidInput);
+            return Result<CheckExistenceOutput>.FromFailure(ErrorType.InvalidInput, "Invalid username format.");
 
         try
         {
             var account = await repository.GetByUsernameAsync(username);
 
             return account == null
-                ? Result<CheckExistenceOutput>.FromFailure(ErrorType.ResourceNotFound)
-                : Result<CheckExistenceOutput>.FromSuccess(new CheckExistenceOutput(account.Id, account.Username));
+                ? Result<CheckExistenceOutput>.FromFailure(ErrorType.ResourceNotFound, "Account not found.")
+                : Result<CheckExistenceOutput>.FromSuccess(new CheckExistenceOutput(account.Id, account.Username),
+                    "Account found successfully.");
         }
         catch (Exception e)
         {
@@ -35,16 +36,17 @@ public class AccountService(IAccountRepository repository) : IAccountService
     public async Task<Result<ProfileOutput>> GetProfileAsync(ProfileInput input)
     {
         if (!Username.TryParse(input.Username, out var username))
-            return Result<ProfileOutput>.FromFailure(ErrorType.InvalidInput);
+            return Result<ProfileOutput>.FromFailure(ErrorType.InvalidInput, "Invalid username format.");
 
         try
         {
             var account = await repository.GetByUsernameAsync(username);
 
             return account == null
-                ? Result<ProfileOutput>.FromFailure(ErrorType.ResourceNotFound)
+                ? Result<ProfileOutput>.FromFailure(ErrorType.ResourceNotFound, "Account not found.")
                 : Result<ProfileOutput>.FromSuccess(
-                    new ProfileOutput(account.Id, account.Username, account.Keys.Public));
+                    new ProfileOutput(account.Id, account.Username, account.Keys.Public),
+                    "Account profile found successfully.");
         }
         catch (Exception e)
         {
@@ -59,6 +61,7 @@ public class AccountService(IAccountRepository repository) : IAccountService
             return Result<RegisterOutput>.FromFailure(ErrorType.InvalidInput, "Invalid username format.");
 
         var foundAccount = await repository.GetByUsernameAsync(username);
+
         if (foundAccount != null)
             return Result<RegisterOutput>.FromFailure(ErrorType.AlreadyExists, "Username already exists.");
 
@@ -119,7 +122,7 @@ public class AccountService(IAccountRepository repository) : IAccountService
             await repository.AddAsync(account);
 
             return Result<RegisterOutput>.FromSuccess(new RegisterOutput(account.Id, account.Username,
-                account.Keys.Public));
+                account.Keys.Public), "Account registered successfully.");
         }
         catch (Exception e)
         {
