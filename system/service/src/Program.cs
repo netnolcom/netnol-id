@@ -16,8 +16,10 @@ builder.Services.AddDbContext<DatabaseContext>(ServiceLifetime.Scoped);
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddCaching();
+builder.Services.ConfigureRateLimiting();
 
 var app = builder.Build();
+app.UseRateLimiter();
 app.UseHttpsRedirection();
 app.UseRouting();
 app.MapControllers();
