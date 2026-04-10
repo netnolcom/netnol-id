@@ -8,9 +8,9 @@ COPY . .
 
 EXPOSE 8080
 
-ENV ASPNETCORE_URLS="http://*:8080"
-ENV DOTNET_ENVIRONMENT="Production"
-ENV DATABASE_URL=""
-ENV CACHE_URL=""
+ENV HOST="http://*:8080"
+ENV ENVIRONMENT="Production"
+ENV DATABASE_URI=""
+ENV CACHE_URI=""
 
 ENTRYPOINT ["dotnet", "run", "-c", "Release", "--non-interactive"]
