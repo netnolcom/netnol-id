@@ -54,13 +54,11 @@ public class AccountRepository(DatabaseContext context, IDistributedCache cache)
 
         if (DefaultCachedValue.Equals(accountAsString))
         {
-            Debug.WriteLine($"Get empty account from cache: {username}");
             return null;
         }
 
         if (!string.IsNullOrWhiteSpace(accountAsString))
         {
-            Debug.WriteLine($"Get account from cache: {username}");
             return Account.Parse(accountAsString);
         }
 
@@ -73,7 +71,6 @@ public class AccountRepository(DatabaseContext context, IDistributedCache cache)
 
     private async Task UpdateCachedAccount(Username username, Account? account)
     {
-        Debug.WriteLine($"Save to cache: {username}, exists: {account != null}");
         await cache.SetStringAsync(username.ToString(), account == null ? DefaultCachedValue : account.ToString());
     }
 }
