@@ -1,4 +1,5 @@
 ﻿using Netnol.Identity.Service.Domain.ValueObjects;
+using StringQueryMap;
 
 namespace Netnol.Identity.Service.Domain.Entities;
 
@@ -81,6 +82,32 @@ public class Account()
             privateHash: Keys.PrivateHash,
             privateWithPassword: encryptedPrivateKeyWithNewPassword,
             privateWithSeed: Keys.PrivateWithSeed
+        );
+    }
+
+    public override string ToString()
+    {
+        var map = new SQM("=", ";");
+
+        map.Add("AID", Id.ToString());
+        map.Add("USR", Username.ToString());
+        map.Add("KYS", Keys.ToString());
+        map.Add("SED", Seed.ToString());
+        map.Add("PWD", Password.ToString());
+
+        return map.ToString();
+    }
+
+    public static Account Parse(string value)
+    {
+        var map = SQM.Parse(value, "=", ";");
+
+        return new Account(
+            id: Identification.Parse(map.Get<string>("AID")),
+            username: Username.Parse(map.Get<string>("USR")),
+            keys: KeyPair.Parse(map.Get<string>("KYS")),
+            seed: Seed.Parse(map.Get<string>("SED")),
+            password: Password.Parse(map.Get<string>("PWD"))
         );
     }
 }
